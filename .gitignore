@@ -1,4 +1,3 @@
-
 # Ambiente Virtual
 venv/
 __pycache__/
@@ -20,3 +19,16 @@ __pycache__/
 
 # Cache do Pytest
 .pytest_cache/
+
+# Logs e arquivos temporários
+*.log
+*.tmp
+*.bak
+*.old
+
+# Arquivos de banco de dados locais
+*.sqlite3
+
+# Diretórios de distribuição
+dist/
+build/
