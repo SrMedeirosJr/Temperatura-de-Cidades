@@ -30,7 +30,7 @@ ProjectCaiena/
 ## Diretório app/
  - main.py: Implementa a API utilizando FastAPI. Define os endpoints para receber dados de cidades e processar informações meteorológicas.
  - openweathermap.py: SDK para comunicação com a API do OpenWeatherMap
- - twitter_sdk.py: SDK para interação com a API do Twitter.
+ - twitter.py: SDK para interação com a API do Twitter.
 ## Diretório tests/
 Contém testes automatizados para verificar o funcionamento correto dos componentes da aplicação.
 
