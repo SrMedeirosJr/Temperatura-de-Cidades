@@ -1,42 +1,81 @@
 import pytest
-from unittest.mock import AsyncMock, patch
-from app.openweathermap import OpenWeatherMapSDK
+import aiohttp
+from aioresponses import aioresponses
+from datetime import datetime
+from app.openweathermap import OpenWeatherMapSDK  # Importando do diretório correto
+
 
 @pytest.fixture
-def forecast_data():
-    return {
+def owmsdk():
+    return OpenWeatherMapSDK()
+
+
+@pytest.mark.asyncio
+async def test_get_current_weather(owmsdk):
+    city = "London"
+    expected_response = {
+        "weather": [{"description": "clear sky"}],
+        "main": {"temp": 20.0}
+    }
+
+    with aioresponses() as m:
+        m.get(f"http://api.openweathermap.org/data/2.5/weather?q={city}&appid={owmsdk.api_key}&units=metric",
+              payload=expected_response)
+
+        response = await owmsdk.get_current_weather(city)
+        assert response == expected_response
+
+
+@pytest.mark.asyncio
+async def test_get_forecast(owmsdk):
+    city = "London"
+    expected_response = {
         "list": [
-            {"dt_txt": "2024-07-29 12:00:00", "main": {"temp": 25}},
-            {"dt_txt": "2024-07-30 12:00:00", "main": {"temp": 30}}
+            {"dt_txt": "2024-07-31 12:00:00", "main": {"temp": 22.0}},
+            {"dt_txt": "2024-08-01 12:00:00", "main": {"temp": 23.0}}
         ]
     }
 
-@patch('app.openweathermap.aiohttp.ClientSession', new_callable=AsyncMock)
-@pytest.mark.asyncio
-async def test_get_current_weather(mock_client_session):
-    # Criando um mock para a resposta
-    mock_response = AsyncMock()
-    mock_response.json.return_value = {
-        "main": {"temp": 25},
-        "weather": [{"description": "clear sky"}]
+    with aioresponses() as m:
+        m.get(f"http://api.openweathermap.org/data/2.5/forecast?q={city}&appid={owmsdk.api_key}&units=metric",
+              payload=expected_response)
+
+        response = await owmsdk.get_forecast(city)
+        assert response == expected_response
+
+
+def test_parse_forecast(owmsdk):
+    forecast_data = {
+        "list": [
+            {"dt_txt": "2024-07-31 12:00:00", "main": {"temp": 22.0}},
+            {"dt_txt": "2024-08-01 12:00:00", "main": {"temp": 23.0}},
+            {"dt_txt": "2024-08-01 15:00:00", "main": {"temp": 24.0}}
+        ]
     }
-    # Configurando o mock para o gerenciador de contexto assíncrono
-    mock_client_session.return_value.get.return_value.__aenter__.return_value = mock_response
+    expected_output = {
+        "2024-08-01": 23.5
+    }
 
-    sdk = OpenWeatherMapSDK()
-    result = await sdk.get_current_weather("TesteCity")
-    assert result["main"]["temp"] == 25
-    assert result["weather"][0]["description"] == "clear sky"
+    output = owmsdk.parse_forecast(forecast_data)
+    assert output == expected_output
 
-@patch('app.openweathermap.aiohttp.ClientSession', new_callable=AsyncMock)
-@pytest.mark.asyncio
-async def test_get_forecast(mock_client_session):
-    # Criando um mock para a resposta
-    mock_response = AsyncMock()
-    mock_response.json.return_value = {"list": []}
-    # Configurando o mock para o gerenciador de contexto assíncrono
-    mock_client_session.return_value.get.return_value.__aenter__.return_value = mock_response
 
-    sdk = OpenWeatherMapSDK()
-    result = await sdk.get_forecast("TesteCity")
-    assert result["list"] == []
+def test_translate_description(owmsdk):
+    description = "clear sky"
+    expected_output = "céu limpo"
+
+    output = owmsdk.translate_description(description)
+    assert output == expected_output
+
+
+def test_format_weather(owmsdk):
+    city = "London"
+    current_temp = 20.0
+    description = "clear sky"
+    forecast = {
+        "2024-08-01": 23.5
+    }
+    expected_output = f"20°C céu limpo em London em {datetime.now().strftime('%d/%m')}. Média para os próximos dias: 24°C em 01/08."
+
+    output = owmsdk.format_weather(city, current_temp, description, forecast)
+    assert output == expected_output

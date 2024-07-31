@@ -34,6 +34,8 @@ class TwitterSDK:
             return response
         except tweepy.TweepyException as e:
             logging.error(f"Erro ao enviar tweet: {e}")
+            raise
         except Exception as e:
             logging.critical(f"Erro inesperado ao enviar tweet: {str(e)}")
+            raise
 
