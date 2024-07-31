@@ -1,0 +1,9 @@
+requests
+openweathermap
+fastapi
+pydantic
+aiohttp
+tweepy
+uvicorn
+pytest
+pytest-asyncio

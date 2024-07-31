@@ -1,0 +1,22 @@
+
+# Ambiente Virtual
+venv/
+__pycache__/
+
+# Configurações do Sistema
+*.pyc
+*.pyo
+*.pyd
+*.swp
+*.swo
+.DS_Store
+
+# Arquivos de Configuração do Editor
+.vscode/
+.idea/
+
+# Configurações e Chaves Sensíveis
+.env
+
+# Cache do Pytest
+.pytest_cache/
