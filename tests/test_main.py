@@ -8,7 +8,7 @@ client = TestClient(app)
 
 @patch('app.openweathermap.OpenWeatherMapSDK.get_current_weather', new_callable=AsyncMock)
 @patch('app.openweathermap.OpenWeatherMapSDK.get_forecast', new_callable=AsyncMock)
-def test_get_weather(mock_get_current_weather, mock_get_forecast):
+async def test_get_weather(mock_get_current_weather, mock_get_forecast):
     mock_get_current_weather.return_value = {"main": {"temp": 25}, "weather": [{"description": "clear sky"}]}
     mock_get_forecast.return_value = {
         "list": [
@@ -24,7 +24,7 @@ def test_get_weather(mock_get_current_weather, mock_get_forecast):
 
 @patch('app.openweathermap.OpenWeatherMapSDK.get_current_weather', new_callable=AsyncMock)
 @patch('app.openweathermap.OpenWeatherMapSDK.get_forecast', new_callable=AsyncMock)
-def test_get_weather_invalid_city(mock_get_current_weather, mock_get_forecast):
+async def test_get_weather_invalid_city(mock_get_current_weather, mock_get_forecast):
     mock_get_current_weather.side_effect = aiohttp.ClientResponseError(None, None, status=404, message="Not Found")
     mock_get_forecast.side_effect = aiohttp.ClientResponseError(None, None, status=404, message="Not Found")
 
