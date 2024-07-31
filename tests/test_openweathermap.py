@@ -2,7 +2,7 @@ import pytest
 import aiohttp
 from aioresponses import aioresponses
 from datetime import datetime
-from app.openweathermap import OpenWeatherMapSDK  # Importando do diretório correto
+from app.openweathermap import OpenWeatherMapSDK
 
 
 @pytest.fixture

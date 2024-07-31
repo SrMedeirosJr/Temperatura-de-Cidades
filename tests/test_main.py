@@ -1,4 +1,3 @@
-# tests/test_main.py
 import aiohttp
 import pytest
 from fastapi.testclient import TestClient

@@ -30,19 +30,19 @@ async def get_weather(request: CityRequest):
     twitter_sdk = TwitterSDK()
 
     try:
-        # Obter a temperatura atual e descrição do clima
+
         current_data = await sdk.get_current_weather(request.city)
         current_temp = current_data['main']['temp']
         description = current_data['weather'][0]['description']
 
-        # Obter a previsão do tempo
+
         forecast_data = await sdk.get_forecast(request.city)
         forecast = sdk.parse_forecast(forecast_data)
 
-        # Formatar a previsão do tempo
+
         formatted_weather = sdk.format_weather(request.city, current_temp, description, forecast)
 
-        # Enviar tweet com a previsão do tempo
+
         await twitter_sdk.send_tweet(formatted_weather)
 
         return {'formatted_weather': formatted_weather}
