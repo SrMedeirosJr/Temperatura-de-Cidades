@@ -6,10 +6,10 @@ from .twitter import TwitterSDK
 import aiohttp
 import logging
 
-# Configuração de logging
+
 logging.basicConfig(level=logging.INFO)
 
-# Instância do FastAPI com detalhes adicionais
+
 app = FastAPI(
     title="Tweet por Temperatura API",
     description="API para obter informações meteorológicas e postar atualizações no Twitter.",
